@@ -2,6 +2,7 @@ import json
 import discord
 from discord.utils import get
 from discord.ext import commands
+import arrow
 
 name_to_unicode = {
     ":regional_indicator_a:": "\U0001F1E6",
@@ -33,29 +34,19 @@ name_to_unicode = {
 }
 bot = commands.Bot("!")
 
-token = ""
-
-with open("setting.json") as setting:
-    text = setting.read()
-    print(text)
-    json_data = json.loads(text)
-    token = json_data["token"]
-    print(f"token: {token}")
-
-@bot.command("vote", help="Create a vote.")
-async def create_vote(ctx):
-    text = ctx.message.content
+@bot.command(help="Create a vote.")
+async def v(ctx, question, *args):
+    author = ctx.message.author.name
+    date = str(ctx.message.created_at)
+    date = date[:len(date) - 7]
 
     # 刪掉原本的指令
     await ctx.message.delete()
 
-    lines = text.split("\n")
-
-    question_text = lines[1]
+    question_text = question
     options_text = []
-
-    for i in range(2, len(lines)):
-        options_text.append(lines[i])
+    for arg in args:
+        options_text.append(args[0])
 
     option_num = len(options_text)
 
@@ -71,12 +62,18 @@ async def create_vote(ctx):
     for i in range(option_num):
         options_text[i] = f"{reactions[i]}：{options_text[i]}"
     
-    poll_text = ""
-    poll_text += f"> 問題：**{question_text}**\n"
+    des = ""
     for option in options_text:
-        poll_text += f"> {option}\n"
+        des += f"> {option}\n"
 
-    poll = await ctx.send(poll_text)
+    embed = discord.Embed(
+        title=question_text,
+        description=des,
+        color=discord.Color.blue())
+
+    embed.set_footer(text=f"（這個問題由{author}在{date}時提出）")
+
+    poll = await ctx.send(embed=embed)
 
     for react in reactions:
         try:
@@ -84,4 +81,9 @@ async def create_vote(ctx):
         except ex:
             print(ex)
 
-bot.run(token)
+
+with open("setting.json") as setting:
+    text = setting.read()
+    json_data = json.loads(text)
+    token = json_data["token"]
+    bot.run(token)
