@@ -32,6 +32,8 @@ name_to_unicode = {
     ":regional_indicator_q:": "\U0001F1FE",
     ":regional_indicator_z:": "\U0001F1FF"
 }
+
+
 bot = commands.Bot("!")
 
 @bot.command(help="Create a vote.")
