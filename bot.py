@@ -1,8 +1,6 @@
 import json
 import discord
-from discord.utils import get
 from discord.ext import commands
-import arrow
 
 name_to_unicode = {
     ":regional_indicator_a:": "\U0001F1E6",
