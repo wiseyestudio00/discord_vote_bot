@@ -48,7 +48,7 @@ async def v(ctx, question, *args):
     question_text = question
     options_text = []
     for arg in args:
-        options_text.append(args[0])
+        options_text.append(arg)
 
     option_num = len(options_text)
 
